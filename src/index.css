@@ -1,0 +1,158 @@
+body {
+  background-color: #f5f7fb;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: "Karla", sans-serif;
+  min-height: 100vh;
+}
+
+.quiz-head {
+  color: #293264;
+  font-weight: bold;
+  font-family: "Karla", sans-serif;
+}
+
+.quiz-div {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.quiz-button {
+  background-color: #4d5b9e;
+  border: none;
+  color: #f5f7fb;
+  width: 150px;
+  height: 50px;
+  font-size: 1.2rem;
+  border-radius: 10px;
+  cursor: pointer;
+  font-family: "Karla", sans-serif;
+}
+
+.quiz-answers {
+  border: 1px solid #293264;
+  color: #293264;
+  width: auto;
+  border-radius: 10px;
+  font-family: "Karla", sans-serif;
+  margin-left: 30px;
+  cursor: pointer;
+  /* white-space: nowrap; */
+  padding: 3px 5px;
+  font-size: 1rem;
+}
+
+.answers {
+  display: flex;
+  flex-direction: row;
+}
+
+.questions {
+  font-family: "Karla", sans-serif;
+  font-size: 1.2rem;
+  color: #293264;
+  font-weight: bold;
+}
+
+.question-main {
+  padding: 20px;
+  width: 700px;
+  border-radius: 5px;
+  margin: 10px;
+}
+
+.check-answers {
+  color: #f5f7fb;
+  background-color: #4d5b9e;
+  width: 150px;
+  height: 30px;
+  border: none;
+  border-radius: 10px;
+  font-size: 1.0875rem;
+  font-family: "Karla", sans-serif;
+  align-self: self-end;
+  cursor: pointer;
+}
+
+/* main{
+    display: flex;
+    flex-direction: column;
+} */
+
+.button-label {
+  display: inline-block;
+  margin: 5px;
+  padding: 10px 20px;
+  background-color: #f5f7fb;
+  color: #4d5b9e;
+  border: 1px solid #4d5b9e;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-right: 10px;
+}
+
+.button-label input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+/* .button-label:hover {
+  background-color: #45a0e4;
+} */
+
+.button-label input[type="radio"]:checked ~ span {
+  background-color: #0074b7;
+}
+
+.correctAnswerBackgroundColor {
+  background-color: red;
+}
+
+.toggle-container {
+  width: 70px;
+  height: 30px;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: background-color 0.5s ease;
+}
+
+.toggle-button {
+  width: 30px;
+  height: 30px;
+  background-color: black;
+  border-radius: 50%;
+  transition: transform 0.5s ease;
+}
+
+@media (max-width: 768px) {
+  body {
+    flex-direction: column; 
+    text-align: center;
+  }
+
+  .question-main {
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+
+
+  .toggle-container {
+    width: 50px;
+    height: 20px;
+    margin: 0 auto;
+  }
+
+  .toggle-button {
+    width: 20px;
+    height: 20px;
+  }
+}
