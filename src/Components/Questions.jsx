@@ -1,10 +1,9 @@
-import React from "react";
+/* eslint-disable react/prop-types */
 import Question from "./Question";
 import { nanoid } from "nanoid";
 
-
 export default function Questions(props) {
-  const elements = props.questions.map((qn) => {
+  const elements = props.questions.map((qn, index) => {
     const id = nanoid();
     return (
       <Question
@@ -18,63 +17,36 @@ export default function Questions(props) {
         clickedAnswer={props.clickedAnswers[qn.id]}
         correctAnswerColor={props.correctAnswerColor}
         answersChecked={props.answersChecked}
-        toggle={props.toggle}
+        questionNumber={index + 1}
+        totalQuestions={props.questions.length}
       />
     );
   });
 
-  const styles = {
-    backgroundColor: props.toggle ? "#616161" : ""
-  };
-
-  const buttonStyles = {
-    backgroundColor : props.toggle ? "white" : "",
-    color : props.toggle ? "#616161" : ""
-  }
-
-  // console.log(props.score)
+  const answeredQuestions = Object.keys(props.clickedAnswers).length;
+  const totalQuestions = props.questions.length;
 
   return (
-    <>
-      <span>Dark/Light Mode</span>
-      <div
-        className="toggle-container"
-        onClick={props.toggleFunc}
-        style={{
-          backgroundColor: props.toggle ? "black" : "white",
-          marginTop: "5px"
-        }}
-      >
-        <div
-          className="toggle-button"
-          style={{
-            transform: props.toggle ? "rotateY(180deg)" : "",
-            backgroundColor: props.toggle ? "white" : "black"
-          }}
-        ></div>
+    <main className="question-main">
+      <div className="progress-indicator">
+        Progress: {answeredQuestions}/{totalQuestions}
       </div>
-      <main style={styles} className="question-main">
-        {elements}
-        {props.score === null && (
-          <button className="check-answers" onClick={props.compareAnswers} style={buttonStyles}>
-            Check Answers
+      {elements}
+      {props.score === null && (
+        <button className="check-answers" onClick={props.compareAnswers}>
+          Check Answers
+        </button>
+      )}
+      {props.score !== null && (
+        <>
+          <p className="result">
+            You scored {props.score}/{props.questions.length}
+          </p>
+          <button className="check-answers" onClick={props.playAgain}>
+            Play Again
           </button>
-        )}
-
-        {props.score !== null && (
-          <>
-            <p
-              className="result"
-              style={{ color: props.toggle ? "white" : "" }}
-            >
-              You scored {props.score}/{props.questions.length}
-            </p>
-            <button className="check-answers" onClick={props.playAgain} style={buttonStyles}>
-              Play again
-            </button>
-          </>
-        )}
-      </main>
-    </>
+        </>
+      )}
+    </main>
   );
 }

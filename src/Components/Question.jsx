@@ -1,44 +1,44 @@
-import React from "react";
+/* eslint-disable react/prop-types */
 import { nanoid } from "nanoid";
 
-
 export default function Question(props) {
-  const answerElements = props.answers.map((answer) => {
-    const isClicked = answer.id === props.clickedAnswer;
-    const isCorrect = answer.answer === props.correct_answer;
-
-    const styles = {
-      backgroundColor:
-        isClicked && props.answersChecked
-          ? "#94D7A2"
-          : isCorrect && props.correctAnswerColor
-          ? "#F8BCBC"
-          : isClicked
-          ? "#D6DBF5"
-          : "#f5f7fb",
-      pointerEvents: props.answersChecked ? "none" : "auto",
-      color : props.toggle ? "black" : ""
-    };
+  const answersElements = props.answers.map((item) => {
+    let className = "button-label";
+    if (props.clickedAnswer === item.id) {
+      className += " selected";
+    }
+    if (props.correctAnswerColor && item.answer === props.correct_answer) {
+      className += " correct";
+    }
+    if (
+      props.correctAnswerColor &&
+      props.clickedAnswer === item.id &&
+      item.answer !== props.correct_answer
+    ) {
+      className += " incorrect";
+    }
 
     return (
-      <button
-        key={answer.id}
-        className="button-label"
-        style={styles}
-        onClick={() => props.handleChange(props.id, answer.id, answer.answer)}
+      <label
+        key={nanoid()}
+        className={className}
+        onClick={() =>
+          !props.answersChecked &&
+          props.handleChange(props.id, item.id, item.answer)
+        }
       >
-        {answer.answer}
-      </button>
+        {item.answer}
+      </label>
     );
   });
 
   return (
     <div>
-      <p className="questions" style={{ color: props.toggle ? "white" : "" }}>
-        {props.question}
+      <p className="question-number">
+        Question {props.questionNumber} of {props.totalQuestions}
       </p>
-      <div className="answers">{answerElements}</div>
-      <hr />
+      <h3 className="questions">{props.question}</h3>
+      <div className="answers">{answersElements}</div>
     </div>
   );
 }

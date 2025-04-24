@@ -3,7 +3,7 @@ import Questions from "./Components/Questions";
 import Start from "./Components/Start";
 import { nanoid } from "nanoid";
 import { decode } from "html-entities";
-
+import VanillaTilt from "vanilla-tilt";
 
 export default function App() {
   const [quiz, setQuiz] = React.useState([]);
@@ -13,7 +13,6 @@ export default function App() {
   const [correctAnswerColor, setCorrectAnswerColor] = React.useState(false);
   const [answersChecked, setAnswersChecked] = React.useState(false);
   const [play, setPlay] = React.useState(false);
-  const [toggle, setToggle] = React.useState(false);
 
   function getQuestions(qn) {
     const question = decode(qn.question);
@@ -26,14 +25,14 @@ export default function App() {
     const answerObjects = all_answers.map((answer) => ({
       id: nanoid(),
       answer: answer,
-      isClicked: false
+      isClicked: false,
     }));
 
     for (let i = all_answers.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [answerObjects[i], answerObjects[j]] = [
         answerObjects[j],
-        answerObjects[i]
+        answerObjects[i],
       ];
     }
 
@@ -43,7 +42,7 @@ export default function App() {
       answers: answerObjects,
       userAnswer: "",
       score: null,
-      id: nanoid()
+      id: nanoid(),
     };
   }
 
@@ -51,6 +50,82 @@ export default function App() {
     fetch("https://opentdb.com/api.php?amount=5")
       .then((res) => res.json())
       .then((data) => setQuiz(data.results.map(getQuestions)));
+  }, []);
+
+  React.useEffect(() => {
+    // Initialize particle background
+    const canvas = document.getElementById("particle-canvas");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const particles = [];
+    const particleCount = window.innerWidth < 768 ? 50 : 100;
+
+    class Particle {
+      constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 2 + 1;
+        this.speedX = Math.random() * 0.5 - 0.25;
+        this.speedY = Math.random() * 0.5 - 0.25;
+      }
+
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        if (this.size > 0.2) this.size -= 0.01;
+        if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+        if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+      }
+
+      draw() {
+        ctx.fillStyle = "rgba(165, 243, 252, 0.8)";
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    function initParticles() {
+      for (let i = 0; i < particleCount; i++) {
+        particles.push(new Particle());
+      }
+    }
+
+    function animateParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach((particle, index) => {
+        particle.update();
+        particle.draw();
+        if (particle.size <= 0.2) {
+          particles.splice(index, 1);
+          particles.push(new Particle());
+        }
+      });
+      requestAnimationFrame(animateParticles);
+    }
+
+    initParticles();
+    animateParticles();
+
+    window.addEventListener("resize", () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+
+    // Initialize VanillaTilt
+    const tiltElements = document.querySelectorAll(".quiz-div, .question-main");
+    VanillaTilt.init(tiltElements, {
+      max: 8, // Reduced from 10 for subtler tilt
+      speed: 400,
+      glare: true,
+      "max-glare": 0.3,
+    });
+
+    return () => {
+      window.removeEventListener("resize", () => {});
+    };
   }, []);
 
   function handleStart() {
@@ -62,7 +137,6 @@ export default function App() {
       .then((res) => res.json())
       .then((data) => {
         const newQuiz = data.results.map(getQuestions);
-
         setQuiz(newQuiz);
         setPlay((prevState) => !prevState);
         setAnswersChecked(false);
@@ -72,15 +146,10 @@ export default function App() {
       });
   }
 
-  function toggleFunc() {
-    setToggle((prevState) => !prevState);
-  }
-
   function compareAnswers() {
     const correct_answer = quiz.map((item) => item.correct_answer);
     const user_answer = quiz.map((item) => item.userAnswer);
 
-    // console.log(correct_answer, user_answer)
     let score = 0;
     for (let i = 0; i < quiz.length; i++) {
       if (correct_answer[i] === user_answer[i]) {
@@ -100,13 +169,13 @@ export default function App() {
           const updateAnswers = item.answers.map((answer) => ({
             ...answer,
             isClicked: answer.id === answerId,
-            userAnswer: answer.id === answerId ? value : answer.userAnswer
+            userAnswer: answer.id === answerId ? value : answer.userAnswer,
           }));
 
           return {
             ...item,
             answers: updateAnswers,
-            userAnswer: value
+            userAnswer: value,
           };
         }
         return item;
@@ -114,14 +183,13 @@ export default function App() {
     );
     setClickedAnswers((prevClickedAnswers) => ({
       ...prevClickedAnswers,
-      [questionId]: answerId
+      [questionId]: answerId,
     }));
   }
 
-  // console.log(quiz);
-
   return (
-    <div>
+    <div className="app-container">
+      <canvas id="particle-canvas"></canvas>
       {start ? (
         <Questions
           questions={quiz}
@@ -132,8 +200,6 @@ export default function App() {
           playAgain={playAgain}
           correctAnswerColor={correctAnswerColor}
           answersChecked={answersChecked}
-          toggle={toggle}
-          toggleFunc={toggleFunc}
         />
       ) : (
         <Start onClick={handleStart} />
